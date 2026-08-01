@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMG OCG Collection</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
+  :root {
+    --gold:#c9a84c; --gold-dim:#8a6f2e; --purple:#6b3fa0;
+    --purple-dark:#2a1545; --bg:#0d0814; --card-bg:#130b20;
+    --border:#2a1c40; --text:#e8dff5; --text-dim:#7a6a9a;
+    --owned:#2d6e3a; --owned-bright:#4caf50;
+    --locked-border:#5a1a1a; --unlocked-border:#2d6e3a;
+    --replica:#4a3a10;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;
+    background-image:radial-gradient(ellipse at 20% 10%,rgba(107,63,160,.18) 0%,transparent 55%),
+      radial-gradient(ellipse at 80% 90%,rgba(201,168,76,.07) 0%,transparent 55%);}
+
+  header{text-align:center;padding:2.5rem 1rem 1.8rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+  header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(107,63,160,.28) 0%,transparent 65%);pointer-events:none;}
+  .eyebrow{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;margin-bottom:.6rem;opacity:.75;}
+  h1{font-family:'Cinzel',serif;font-size:clamp(1.3rem,4.5vw,2.5rem);font-weight:900;color:var(--gold);text-shadow:0 0 28px rgba(201,168,76,.35);line-height:1.15;}
+  h1 .jp{display:block;font-size:.48em;font-weight:400;color:var(--text-dim);letter-spacing:.12em;margin-top:.35rem;}
+  .prog-wrap{max-width:380px;margin:1.4rem auto 0;}
+  .prog-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--text-dim);margin-bottom:.35rem;}
+  .prog-label strong{color:var(--gold);}
+  .bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--gold));border-radius:2px;transition:width .5s ease;}
+
+  .sort-bar{display:flex;justify-content:center;gap:.5rem;padding:1.2rem 1rem .2rem;}
+  .sort-btn{font-family:'Inter',sans-serif;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+    padding:.4rem .9rem;border-radius:20px;border:1px solid var(--border);background:transparent;
+    color:var(--text-dim);cursor:pointer;transition:all .15s;}
+  .sort-btn.active{background:var(--purple);border-color:var(--purple);color:#fff;}
+  .sort-btn:hover:not(.active){border-color:var(--gold-dim);color:var(--text);}
+
+  main{max-width:980px;margin:0 auto;padding:.5rem 1rem 4rem;}
+
+  .sec-header{margin:2.2rem 0 .15rem;padding-bottom:.45rem;border-bottom:1px solid var(--border);}
+  .sec-en{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;}
+  .sec-jp{font-size:.7rem;color:var(--text-dim);margin-top:.18rem;letter-spacing:.08em;}
+  .sec-sub{font-size:.6rem;color:var(--text-dim);margin:.2rem 0 .9rem;opacity:.65;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:.85rem;margin-bottom:.5rem;}
+
+  /* card locked = thin red border, unlocked = thick green border */
+  .card{background:var(--card-bg);border-radius:10px;overflow:hidden;
+    transition:border-color .2s,box-shadow .2s;position:relative;display:flex;flex-direction:column;}
+  .card.card-locked{border:1px solid var(--locked-border);}
+  .card.card-unlocked{border:3px solid var(--unlocked-border);}
+  .card.any-owned.card-unlocked{border-color:var(--owned-bright);box-shadow:0 0 12px rgba(76,175,80,.2);}
+
+  .card-img-wrap{position:relative;width:100%;padding-top:143%;background:var(--purple-dark);overflow:hidden;
+    cursor:pointer;flex-shrink:0;}
+  .card-img-wrap:hover{filter:brightness(1.1);}
+  .card-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s;}
+  .card-img-wrap img.loaded{opacity:1;}
+  .card-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--border);}
+  .owned-badge{position:absolute;top:5px;right:5px;background:var(--owned);color:#fff;
+    border-radius:8px;padding:1px 5px;font-size:.58rem;font-weight:600;
+    opacity:0;transition:opacity .2s;box-shadow:0 1px 5px rgba(0,0,0,.5);}
+  .card.any-owned .owned-badge{opacity:1;}
+
+  .card-info{padding:.5rem .65rem .4rem;flex-shrink:0;}
+  .card-name{font-size:.67rem;font-weight:500;color:var(--text);line-height:1.35;
+    min-height:calc(2 * .67rem * 1.35);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .card-code{font-family:monospace;font-size:.62rem;color:var(--gold);letter-spacing:.04em;margin-top:.22rem;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card-meta{font-size:.56rem;color:var(--text-dim);margin-top:.1rem;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .replica-tag{display:inline-block;font-size:.5rem;padding:1px 4px;background:var(--replica);color:#c9a84c;border-radius:3px;margin-top:.2rem;}
+  .rarity-btn{font-size:.55rem;color:var(--gold-dim);margin-top:.3rem;cursor:pointer;letter-spacing:.04em;}
+  .rarity-btn:hover{color:var(--gold);}
+
+  .variants{padding:.3rem .5rem .45rem;border-top:1px solid var(--border);flex:1;}
+  .var-row{display:flex;align-items:center;gap:.45rem;padding:.28rem .3rem;border-radius:5px;transition:background .12s;}
+  .var-row.unlocked{cursor:pointer;}
+  .var-row.unlocked:hover{background:rgba(255,255,255,.04);}
+  .var-row.owned{background:rgba(45,110,58,.18);}
+  .var-row.var-locked{cursor:default;}
+  .var-check{width:13px;height:13px;border-radius:3px;border:1px solid var(--border);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:.5rem;transition:background .12s,border-color .12s;}
+  .var-row.owned .var-check{background:var(--owned);border-color:var(--owned-bright);}
+  .rdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px;vertical-align:middle;flex-shrink:0;}
+  .var-label{font-size:.59rem;color:var(--text-dim);line-height:1.3;flex:1;}
+  .var-row.owned .var-label{color:var(--text);}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;
+    align-items:center;justify-content:center;padding:1rem;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:#160e24;border:1px solid var(--border);border-radius:14px;
+    max-width:420px;width:100%;max-height:90vh;overflow-y:auto;position:relative;}
+  .modal-img-wrap{width:100%;padding:1.5rem;background:var(--purple-dark);border-radius:13px 13px 0 0;
+    display:flex;align-items:center;justify-content:center;}
+  .modal-img-wrap img{width:55%;object-fit:contain;border-radius:6px;}
+  .modal-body{padding:1.2rem;}
+  .modal-en{font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold);letter-spacing:.1em;margin-bottom:.1rem;}
+  .modal-jp{font-size:.75rem;color:var(--text-dim);margin-bottom:.25rem;letter-spacing:.08em;}
+  .modal-set{font-size:.65rem;color:var(--text-dim);margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:.7rem;}
+  .modal-section-title{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.5rem;}
+  .rarity-info-list{display:flex;flex-direction:column;gap:.6rem;}
+  .rarity-item{display:flex;gap:.75rem;align-items:flex-start;}
+  .rarity-swatch{width:28px;height:28px;border-radius:5px;flex-shrink:0;margin-top:2px;}
+  .rarity-item-name{font-size:.65rem;font-weight:600;color:var(--text);margin-bottom:.15rem;}
+  .rarity-item-desc{font-size:.58rem;color:var(--text-dim);line-height:1.5;}
+  .modal-close{position:absolute;top:.75rem;right:.85rem;font-size:1.1rem;cursor:pointer;color:var(--text-dim);
+    background:none;border:none;padding:4px 8px;border-radius:5px;}
+  .modal-close:hover{color:var(--text);}
+  .tap-hint{text-align:center;font-size:.65rem;color:var(--text-dim);margin-top:1.8rem;opacity:.5;}
+  @media(max-width:400px){.grid{grid-template-columns:repeat(2,1fr);}h1{font-size:1.2rem;}}
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">OCG Japanese · Collection Tracker</p>
+  <h1>Dark Magician Girl<span class="jp">ブラック・マジシャン・ガール — Archetype · All OCG Prints</span></h1>
+  <div class="prog-wrap">
+    <div class="prog-label"><span>Variants owned</span><strong id="prog-text">0 / 0</strong></div>
+    <div class="bar"><div class="bar-fill" id="bar-fill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<div class="sort-bar">
+  <button class="sort-btn active" id="btn-card" onclick="setSort('card')">Sort by Card</button>
+  <button class="sort-btn" id="btn-set" onclick="setSort('set')">Sort by Set</button>
+</div>
+
+<main id="app"></main>
+
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+    <div class="modal-img-wrap"><img id="modal-img" src="" alt=""></div>
+    <div class="modal-body">
+      <div class="modal-en" id="modal-en"></div>
+      <div class="modal-jp" id="modal-jp"></div>
+      <div class="modal-set" id="modal-set"></div>
+      <div class="modal-section-title">How to identify each rarity on this card</div>
+      <div class="rarity-info-list" id="modal-rarities"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const RARITY_META = {
+  C:    {color:'#666',   name:'Common (C)',                        desc:'No foil. Plain matte card — no shine anywhere.'},
+  R:    {color:'#aaa',   name:'Rare (R)',                          desc:'Only the card name has a silver foil sheen. Artwork is flat matte.'},
+  SR:   {color:'#d0d0d0',name:'Super Rare (SR)',                   desc:'Artwork has a subtle holographic shimmer when tilted. Card name is plain text.'},
+  UR:   {color:'#ffd700',name:'Ultra Rare (UR)',                   desc:'Gold foil card name + holographic artwork. The name glints gold — the most common shiny rarity.'},
+  UtR:  {color:'#e8c060',name:'Ultimate Rare (UtR)',               desc:'Embossed raised texture on the artwork and card name — you can feel bumps. Like a 3D relief. Very tactile and unique.'},
+  ScR:  {color:'#c8b0ff',name:'Secret Rare (ScR)',                 desc:'Diagonal rainbow scratch/sparkle across the whole artwork — like tiny grooves catching light at an angle.'},
+  PScR: {color:'#80eeff',name:'Prismatic Secret Rare (PScR)',      desc:'Full prismatic rainbow shimmer on the artwork — shifts through all colours as you tilt it. More vivid and flowing than Secret Rare.'},
+  MLR:  {color:'#c8900a',name:'Millennium Rare (MLR)',             desc:'Gold embossed texture on the artwork — raised gold etching feel, like ancient Egyptian metal. Unique tactile quality.'},
+  CR:   {color:'#a0e8ff',name:"Collector's Rare (CR)",             desc:"Rippling wave foil — like light through water. Flows in a curved pattern rather than diagonal scratches. Only in Collector's Pack sets."},
+  PGR:  {color:'#ffe04a',name:'Premium Gold Rare (PGR)',           desc:'Deep gold foil on the entire card — artwork, name and borders all gold-toned. Only in Premium Gold Edition sets.'},
+  QCScR:{color:'#ff88ff',name:'Quarter Century Secret Rare (QCScR)', desc:'25th anniversary finish: diagonal Secret Rare sparkle PLUS a special QC prismatic holographic stamp. Most prestigious modern rarity.'},
+};
+function rdot(r){const c=(RARITY_META[r]||{color:'#888'}).color;return `<span class="rdot" style="background:${c}"></span>`;}
+
+// ── OCG JP IMAGES ────────────────────────────────────────────────
+// ygoprodeck CDN works in browsers (CORS-friendly)
+// ms.yugipedia.com hotlink-blocks cross-origin image requests — do NOT use
+// All images are TCG art (same artwork as OCG, different foiling)
+const P = {
+  // Dark Magician Girl artworks
+  dmg_yap1:  'https://yugi-market.com/cdn/shop/products/YAP1-JP006ULTRARARE.jpg?v=1654515312',
+  dmg_orig:  'https://images.ygoprodeck.com/images/cards/38033121.jpg',
+  dmg_mvp1:  'https://images.ygoprodeck.com/images/cards/38033122.jpg',
+  dmg_qcac:  'https://images.ygoprodeck.com/images/cards/38033123.jpg',
+  dmg_qcdb:  'https://images.ygoprodeck.com/images/cards/38033124.jpg',
+  dmg_qccu:  'https://images.ygoprodeck.com/images/cards/38033125.jpg',
+  dmg_lpst:  'https://images.ygoprodeck.com/images/cards/38033126.jpg',
+  // Toon DMG — all same artwork, one image
+  toon:      'https://images.ygoprodeck.com/images/cards/90960358.jpg',
+  // Dragon Knight — two artworks
+  dk_orig:   'https://images.ygoprodeck.com/images/cards/43892409.jpg',
+  dk_alt:    'https://images.ygoprodeck.com/images/cards/43892408.jpg',
+  // Apprentice
+  app:       'https://images.ygoprodeck.com/images/cards/2501624.jpg',
+  // Magi Magi has no password — use ygoprodeck card page image
+  magi:      'https://images.ygoprodeck.com/images/cards/10000030.jpg',
+};
+
+// ── DATA ─────────────────────────────────────────────────────────────
+// Verified from Yugipedia card galleries (fetched 2026-08-01)
+// locked:false + owned:true = you own this variant
+// locked:true = not yet acquired, cannot tick
+const SECTIONS = [
+  { en:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+    sub:'DARK · Lv 6 · Spellcaster / Effect · ATK 2000 / DEF 1700',
+    cards:[
+      { id:'YAP1-JP006', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2008', set:'Anniversary Pack', img:P.dmg_yap1, locked:false,
+        variants:[{r:'UR',label:'Ultra Rare',owned:true,locked:false}]},
+      { id:'CCC2-JP001', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2003', set:'Ceremonial Challenge Cup', img:P.dmg_orig, locked:false,
+        variants:[{r:'UR',label:'Ultra Rare',owned:true,locked:false}]},
+      { id:'MVP1-JP056', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2016', set:'Dark Side of Dimensions Movie Pack', img:P.dmg_mvp1, locked:true,
+        variants:[
+          {r:'UR', label:'Ultra Rare', owned:false,locked:true},
+          {r:'ScR',label:'Secret Rare',owned:false,locked:true},
+        ]},
+      { id:'SDMY-JP011', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2016', set:'Structure Deck: Yugi Muto', img:P.dmg_orig, locked:true,
+        variants:[{r:'C',label:'Common',owned:false,locked:true}]},
+      { id:'15AX-JPM01', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2015', set:'Duelist Road — Piece of Memory', img:P.dmg_orig, locked:true,
+        variants:[
+          {r:'ScR',label:'Secret Rare',   owned:false,locked:true},
+          {r:'MLR',label:'Millennium Rare',owned:false,locked:true},
+        ]},
+      { id:'QCDB-JP008', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2023', set:'Quarter Century Duelist Box', img:P.dmg_qcdb, locked:true,
+        variants:[{r:'UR',label:'Ultra Rare',owned:false,locked:true}]},
+      { id:'QCAC-JP019', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2023', set:'Quarter Century Art Collection', img:P.dmg_qcac, locked:true,
+        variants:[
+          {r:'ScR',   label:'Secret Rare',   owned:false,locked:true},
+          {r:'QCScR', label:'QC Secret Rare',owned:false,locked:true},
+        ]},
+      { id:'QCCU-JP002', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2024', set:'QC Chronicle side:UNITY', img:P.dmg_qcac, locked:true,
+        variants:[
+          {r:'UR',   label:'Ultra Rare',             owned:false,locked:true},
+          {r:'ScR',  label:'Secret Rare',            owned:false,locked:true},
+          {r:'QCScR',label:'QC Secret Rare (Alt Art)',owned:false,locked:true},
+        ]},
+      { id:'LPST-JP002', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2024', set:'Limited Pack: Stamp Edition', img:P.dmg_lpst, locked:true,
+        variants:[{r:'UR',label:'Ultra Rare',owned:false,locked:true}]},
+      { id:'DMMD-JP001', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2020', set:'Duelist & Monsters Memorial Disc Promo', img:P.dmg_orig, locked:true,
+        variants:[{r:'ScR',label:'20th Secret Rare',owned:false,locked:true}]},
+      { id:'711E-JP002', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2025', set:'7-Eleven Collaboration Campaign', img:P.dmg_orig, locked:false,
+        variants:[{r:'UR',label:'Ultra Rare (Normal Parallel)',owned:true,locked:false}]},
+      // Replicas
+      { id:'P4-01', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2001', set:'Premium Pack 4', img:P.dmg_orig, replica:true, locked:true,
+        variants:[{r:'UR',label:'Ultra Rare',owned:false,locked:true}]},
+      { id:'MB01-JP011', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2016', set:'Millennium Box Gold Edition', img:P.dmg_orig, replica:true, locked:true,
+        variants:[{r:'MLR',label:'Millennium Rare',owned:false,locked:true}]},
+      { id:'15AY-JPA04', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2015', set:'Memories: Duelist Kingdom', img:P.dmg_orig, replica:true, locked:true,
+        variants:[{r:'UR',label:'Ultra Rare',owned:false,locked:true}]},
+      { id:'15AY-JPB03', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2015', set:'Memories: Battle City', img:P.dmg_orig, replica:true, locked:true,
+        variants:[{r:'UR',label:'Ultra Rare',owned:false,locked:true}]},
+      { id:'15AY-JPC10', name:'Dark Magician Girl', jp:'ブラック・マジシャン・ガール',
+        year:'2015', set:'Memories: Ceremonial Battle', img:P.dmg_orig, replica:true, locked:true,
+        variants:[{r:'UR',label:'Ultra Rare',owned:false,locked:true}]},
+    ]},
+
+  { en:'Toon Dark Magician Girl', jp:'トゥーン・ブラック・マジシャン・ガール',
+    sub:'DARK · Lv 6 · Spellcaster / Toon / Effect · ATK 2000 / DEF 1700',
+    cards:[
+      // G6-02 has TWO rarities: UR and ScR — confirmed by Yugipedia
+      { id:'G6-02', name:'Toon Dark Magician Girl', jp:'トゥーン・ブラック・マジシャン・ガール',
+        year:'2001', set:'DM6: Expert 2 Promo', img:P.toon, locked:true,
+        variants:[
+          {r:'UR', label:'Ultra Rare', owned:false,locked:true},
+          {r:'ScR',label:'Secret Rare',owned:false,locked:true},
+        ]},
+      { id:'BE02-JP207', name:'Toon Dark Magician Girl', jp:'トゥーン・ブラック・マジシャン・ガール',
+        year:'2011', set:"Beginner's Edition 2 Reprint", img:P.toon, locked:true,
+        variants:[{r:'ScR',label:'Secret Rare',owned:false,locked:true}]},
+      { id:'DP16-JP042', name:'Toon Dark Magician Girl', jp:'トゥーン・ブラック・マジシャン・ガール',
+        year:'2016', set:'Duelist Pack: Battle City', img:P.toon, locked:true,
+        variants:[{r:'R',label:'Rare',owned:false,locked:true}]},
+      { id:'PGB1-JP021', name:'Toon Dark Magician Girl', jp:'トゥーン・ブラック・マジシャン・ガール',
+        year:'2021', set:'Prismatic God Box', img:P.toon, locked:true,
+        variants:[{r:'MLR',label:'Millennium Rare',owned:false,locked:true}]},
+      // QCLP-JP010 has 4 variants including Original Layout UR
+      { id:'QCLP-JP010', name:'Toon Dark Magician Girl', jp:'トゥーン・ブラック・マジシャン・ガール',
+        year:'2024', set:'Quarter Century Limited Pack', img:P.toon, locked:true,
+        variants:[
+          {r:'UR',   label:'Ultra Rare (Original Layout)',owned:false,locked:true},
+          {r:'UR',   label:'Ultra Rare',                  owned:false,locked:true},
+          {r:'ScR',  label:'Secret Rare',                 owned:false,locked:true},
+          {r:'QCScR',label:'QC Secret Rare',              owned:false,locked:true},
+        ]},
+      { id:'RV01-JP013', name:'Toon Dark Magician Girl', jp:'トゥーン・ブラック・マジシャン・ガール',
+        year:'2025', set:'Revolution Booster: Toon', img:P.toon, locked:false,
+        variants:[
+          {r:'C',  label:'Common',      owned:true, locked:false}, // OWNED
+          {r:'ScR',label:'Secret Rare', owned:false,locked:true},
+        ]},
+    ]},
+
+  { en:'Dark Magician Girl the Dragon Knight', jp:'竜騎士ブラック・マジシャン・ガール',
+    sub:'DARK · Lv 8 · Dragon / Fusion / Effect · ATK 2600 / DEF 1700',
+    cards:[
+      { id:'CPL1-JP004', name:'DMG the Dragon Knight', jp:'竜騎士ブラック・マジシャン・ガール',
+        year:'2014', set:'Collectors Pack: Duelist of Legend Version', img:P.dk_orig, locked:true,
+        variants:[
+          {r:'UR',label:'Ultra Rare',      owned:false,locked:true},
+          {r:'CR',label:"Collector's Rare",owned:false,locked:true},
+        ]},
+      { id:'RC03-JP020', name:'DMG the Dragon Knight', jp:'竜騎士ブラック・マジシャン・ガール',
+        year:'2017', set:'Rarity Collection Premium Gold Edition', img:P.dk_orig, locked:true,
+        variants:[
+          {r:'UR', label:'Ultra Rare',               owned:false,locked:true},
+          {r:'ScR',label:'Secret Rare',              owned:false,locked:true},
+          {r:'CR', label:"Collector's Rare",         owned:false,locked:true},
+          {r:'PGR',label:'Premium Gold Rare',        owned:false,locked:true},
+          {r:'PGR',label:'Premium Gold Rare (Alt Art)',owned:false,locked:true},
+        ]},
+      { id:'PAC1-JP023', name:'DMG the Dragon Knight', jp:'竜騎士ブラック・マジシャン・ガール',
+        year:'2020', set:'Prismatic Art Collection', img:P.dk_orig, locked:false,
+        variants:[
+          {r:'SR',  label:'Super Rare',                    owned:true, locked:false}, // OWNED
+          {r:'ScR', label:'Secret Rare',                   owned:false,locked:true},
+          {r:'ScR', label:'Secret Rare (Alt Art)',         owned:false,locked:true},
+          {r:'PScR',label:'Prismatic Secret Rare',         owned:false,locked:true},
+          {r:'PScR',label:'Prismatic Secret Rare (Alt Art)',owned:false,locked:true},
+        ]},
+      { id:'QCAC-JP020', name:'DMG the Dragon Knight', jp:'竜騎士ブラック・マジシャン・ガール',
+        year:'2023', set:'Quarter Century Art Collection', img:P.dk_alt, locked:true,
+        variants:[
+          {r:'SR',   label:'Super Rare',              owned:false,locked:true},
+          {r:'ScR',  label:'Secret Rare',             owned:false,locked:true},
+          {r:'ScR',  label:'Secret Rare (Alt Art)',   owned:false,locked:true},
+          {r:'QCScR',label:'QC Secret Rare',         owned:false,locked:true},
+          {r:'QCScR',label:'QC Secret Rare (Alt Art)',owned:false,locked:true},
+        ]},
+      { id:'TTP1-JP014', name:'DMG the Dragon Knight', jp:'竜騎士ブラック・マジシャン・ガール',
+        year:'2024', set:'Tactical-Try Pack: Dark Magic', img:P.dk_orig, locked:true,
+        variants:[{r:'C',label:'Common',owned:false,locked:true}]},
+    ]},
+
+  { en:"Dark Magician Girl the Magician's Apprentice", jp:'魔術師の弟子－ブラック・マジシャン・ガール',
+    sub:'DARK · Lv 6 · Spellcaster / Effect · ATK 2000 / DEF 1700',
+    cards:[
+      { id:'ALIN-JP004', name:"DMG the Magician's Apprentice", jp:'魔術師の弟子－ブラック・マジシャン・ガール',
+        year:'2024', set:'Alliance Insight', img:P.app, locked:false,
+        variants:[
+          {r:'UR',   label:'Ultra Rare',                    owned:true, locked:false}, // OWNED
+          {r:'UtR',  label:'Ultimate Rare',                 owned:false,locked:true},
+          {r:'ScR',  label:'Secret Rare',                   owned:false,locked:true},
+          {r:'QCScR',label:'QC Secret Rare',                owned:false,locked:true},
+          {r:'UR',   label:'Ultra Rare (+1 Bonus Pack)',     owned:false,locked:true},
+          {r:'QCScR',label:'QC Secret Rare (+1 Bonus Pack)',owned:false,locked:true},
+        ]},
+    ]},
+
+  { en:'Magi Magi ☆ Magician Gal', jp:'魔導法士 ジュノン',
+    sub:'DARK · Rank 6 · Spellcaster / Xyz / Effect · ATK 2400 / DEF 2000',
+    cards:[
+      { id:'WJMP-JP018', name:'Magi Magi ☆ Magician Gal', jp:'魔導法士 ジュノン',
+        year:'2012', set:'Weekly Shōnen Jump Issue 2 Promo', img:P.magi, locked:false,
+        variants:[{r:'UR',label:'Ultra Rare',owned:true,locked:false}]},
+    ]},
+];
+
+// Assign variant IDs
+SECTIONS.forEach(s=>s.cards.forEach(c=>c.variants.forEach((v,i)=>{v.vid=c.id+'|'+i;})));
+
+// ── STORAGE ───────────────────────────────────────────────────────
+function loadOwned(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('dmg-v6')||'{}');
+    SECTIONS.forEach(s=>s.cards.forEach(c=>c.variants.forEach(v=>{
+      if(!v.locked&&saved[v.vid]!==undefined)v.owned=saved[v.vid];
+    })));
+  }catch(e){}
+}
+function saveOwned(){
+  const state={};
+  SECTIONS.forEach(s=>s.cards.forEach(c=>c.variants.forEach(v=>{state[v.vid]=v.owned;})));
+  try{localStorage.setItem('dmg-v6',JSON.stringify(state));}catch(e){}
+}
+function updateProgress(){
+  const all=SECTIONS.flatMap(s=>s.cards.flatMap(c=>c.variants));
+  const n=all.filter(v=>v.owned&&!v.locked).length;
+  document.getElementById('prog-text').textContent=`${n} / ${all.length}`;
+  document.getElementById('bar-fill').style.width=all.length?`${(n/all.length)*100}%`:'0%';
+}
+function ownedCount(card){return card.variants.filter(v=>v.owned&&!v.locked).length;}
+function unlockedCount(card){return card.variants.filter(v=>!v.locked).length;}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+const YUGIPEDIA={
+  'Dark Magician Girl':                           'https://yugipedia.com/wiki/Card_Gallery:Dark_Magician_Girl',
+  'Toon Dark Magician Girl':                      'https://yugipedia.com/wiki/Card_Gallery:Toon_Dark_Magician_Girl',
+  'Dark Magician Girl the Dragon Knight':         'https://yugipedia.com/wiki/Card_Gallery:Dark_Magician_Girl_the_Dragon_Knight',
+  "Dark Magician Girl the Magician's Apprentice": "https://yugipedia.com/wiki/Card_Gallery:Dark_Magician_Girl_the_Magician's_Apprentice",
+  'Magi Magi ☆ Magician Gal':                    'https://yugipedia.com/wiki/Card_Gallery:Magi_Magi_%E2%98%86_Magician_Gal',
+};
+function openModal(card){
+  document.getElementById('modal-img').src=card.img;
+  document.getElementById('modal-en').textContent=card.name;
+  document.getElementById('modal-jp').textContent=card.jp;
+  document.getElementById('modal-set').textContent=card.year+' · '+card.set;
+  const list=document.getElementById('modal-rarities');
+  list.innerHTML='';
+  const seen=new Set();
+  card.variants.forEach(v=>{
+    if(seen.has(v.r))return;seen.add(v.r);
+    const m=RARITY_META[v.r]||{color:'#888',name:v.r,desc:''};
+    const item=document.createElement('div');item.className='rarity-item';
+    item.innerHTML=`<div class="rarity-swatch" style="background:${m.color}"></div>
+      <div><div class="rarity-item-name">${m.name}</div><div class="rarity-item-desc">${m.desc}</div></div>`;
+    list.appendChild(item);
+  });
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(e){if(e.target===document.getElementById('modal'))document.getElementById('modal').classList.remove('open');}
+
+// ── BUILD CARD ────────────────────────────────────────────────────
+function buildCard(card){
+  const allLocked=card.locked;
+  const anyOwned=ownedCount(card)>0;
+  const ul=unlockedCount(card);
+  const div=document.createElement('div');
+  div.className='card'+(allLocked?' card-locked':' card-unlocked')+(anyOwned?' any-owned':'')+(card.replica?' replica':'');
+
+  const imgWrap=document.createElement('div');imgWrap.className='card-img-wrap';
+  imgWrap.innerHTML=`<div class="card-img-placeholder">🃏</div>
+    <img src="${card.img}" alt="${card.name}" loading="lazy">
+    ${ul>0?`<div class="owned-badge">${ownedCount(card)}/${ul}</div>`:''}`;
+  const img=imgWrap.querySelector('img');
+  img.onload=()=>img.classList.add('loaded');
+  img.onerror=()=>img.style.display='none';
+  // tap image = open yugipedia gallery
+  const cardNameFull=SECTIONS.find(s=>s.cards.includes(card))?.en||card.name;
+  imgWrap.addEventListener('click',()=>{
+    const url=YUGIPEDIA[cardNameFull]||'https://yugipedia.com';
+    window.open(url,'_blank');
+  });
+
+  const info=document.createElement('div');info.className='card-info';
+  info.innerHTML=`<div class="card-name">${card.name}</div>
+    <div class="card-code">${card.id}</div>
+    <div class="card-meta">${card.year} · ${card.set}</div>
+    ${card.replica?'<div class="replica-tag">REPLICA</div>':''}`;
+  const rarBtn=document.createElement('div');rarBtn.className='rarity-btn';
+  rarBtn.textContent='Rarity guide ›';
+  rarBtn.addEventListener('click',()=>openModal(card));
+  info.appendChild(rarBtn);
+
+  const varDiv=document.createElement('div');varDiv.className='variants';
+  card.variants.forEach(v=>{
+    const row=document.createElement('div');
+    row.className='var-row'+(v.locked?' var-locked':' unlocked')+(v.owned&&!v.locked?' owned':'');
+    row.innerHTML=`<div class="var-check">${v.owned&&!v.locked?'✓':''}</div>
+      <div class="var-label">${rdot(v.r)}${v.label}</div>`;
+    if(!v.locked){
+      row.addEventListener('click',()=>{
+        v.owned=!v.owned;
+        row.classList.toggle('owned',v.owned);
+        row.querySelector('.var-check').textContent=v.owned?'✓':'';
+        const n=ownedCount(card);
+        div.classList.toggle('any-owned',n>0);
+        const badge=div.querySelector('.owned-badge');
+        if(badge)badge.textContent=`${n}/${unlockedCount(card)}`;
+        saveOwned();updateProgress();
+      });
+    }
+    varDiv.appendChild(row);
+  });
+
+  div.appendChild(imgWrap);div.appendChild(info);div.appendChild(varDiv);
+  return div;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function renderByCard(){
+  const app=document.getElementById('app');app.innerHTML='';
+  SECTIONS.forEach(sec=>{
+    const hdr=document.createElement('div');hdr.className='sec-header';
+    hdr.innerHTML=`<div class="sec-en">${sec.en}</div><div class="sec-jp">${sec.jp}</div>`;
+    app.appendChild(hdr);
+    const sub=document.createElement('p');sub.className='sec-sub';sub.textContent=sec.sub;app.appendChild(sub);
+    const grid=document.createElement('div');grid.className='grid';
+    sec.cards.forEach(c=>grid.appendChild(buildCard(c)));
+    app.appendChild(grid);
+  });
+  hint(app);
+}
+function renderBySet(){
+  const app=document.getElementById('app');app.innerHTML='';
+  const cards=SECTIONS.flatMap(s=>s.cards);
+  const map=new Map();
+  cards.forEach(c=>{
+    const k=c.year+'||'+c.set;
+    if(!map.has(k))map.set(k,{year:c.year,set:c.set,cards:[]});
+    map.get(k).cards.push(c);
+  });
+  const sorted=[...map.values()].sort((a,b)=>a.year===b.year?a.set.localeCompare(b.set):a.year.localeCompare(b.year));
+  sorted.forEach(g=>{
+    const hdr=document.createElement('div');hdr.className='sec-header';
+    hdr.innerHTML=`<div class="sec-en">${g.year} · ${g.set}</div>`;
+    app.appendChild(hdr);
+    const grid=document.createElement('div');grid.className='grid';
+    g.cards.forEach(c=>grid.appendChild(buildCard(c)));
+    app.appendChild(grid);
+  });
+  hint(app);
+}
+function hint(app){
+  const h=document.createElement('p');h.className='tap-hint';
+  h.textContent='Tap card image → Yugipedia OCG gallery · Tap "Rarity guide" → identify foiling · Tap unlocked variants to mark owned';
+  app.appendChild(h);
+}
+function setSort(mode){
+  document.getElementById('btn-card').classList.toggle('active',mode==='card');
+  document.getElementById('btn-set').classList.toggle('active',mode==='set');
+  mode==='card'?renderByCard():renderBySet();
+}
+
+loadOwned();
+renderByCard();
+updateProgress();
+</script>
+</body>
+</html>
