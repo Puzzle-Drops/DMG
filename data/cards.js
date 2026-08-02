@@ -142,23 +142,33 @@ const CARD_DATA = {
       "label": "Stamp Edition art",
       "note": "OCG-exclusive postage-stamp styled illustration."
     },
-    "ocg-ddm": {
+    "ocg-ddm-blue": {
       "order": 9,
-      "label": "Dungeon Dice Monsters promo art",
-      "note": "Promos packaged with Dungeon Dice Monsters, in three colourways."
+      "label": "Dungeon Dice Monsters — wide shot",
+      "note": "DDM promo, full-body framing with the hieroglyph ring. Blue colourway, in Secret and Ultimate Rare."
+    },
+    "ocg-ddm-green": {
+      "order": 10,
+      "label": "Dungeon Dice Monsters — mid shot",
+      "note": "DDM promo, waist-up framing holding the staff. Green colourway, in Secret and Ultimate Rare."
+    },
+    "ocg-ddm-pink": {
+      "order": 11,
+      "label": "Dungeon Dice Monsters — close-up",
+      "note": "DDM promo, tight facial framing. Pink colourway, in Secret and Ultimate Rare."
     },
     "ocg-hc01": {
-      "order": 10,
+      "order": 12,
       "label": "History Archive Collection art",
       "note": "OCG-exclusive art from History Archive Collection."
     },
     "ocg-qcuc": {
-      "order": 11,
+      "order": 13,
       "label": "QC Unity & Pride campaign art",
       "note": "OCG-exclusive campaign artwork."
     },
     "ocg-steel": {
-      "order": 12,
+      "order": 14,
       "label": "Special Card artwork",
       "note": "The \"Dark Magician Girl\" Special Card promo."
     },
@@ -253,7 +263,7 @@ const CARD_DATA = {
             {
               "rarity": "UtR",
               "label": "Ultimate Rare (Pink)",
-              "art": "ocg-ddm",
+              "art": "ocg-ddm-pink",
               "conf": "low",
               "img": "artwork/cards/dark-magician-girl/DDM-UtR-Pink.jpg",
               "collected": false
@@ -261,7 +271,7 @@ const CARD_DATA = {
             {
               "rarity": "UtR",
               "label": "Ultimate Rare (Green)",
-              "art": "ocg-ddm",
+              "art": "ocg-ddm-green",
               "conf": "low",
               "img": "artwork/cards/dark-magician-girl/DDM-UtR-Green.jpg",
               "collected": false
@@ -269,7 +279,7 @@ const CARD_DATA = {
             {
               "rarity": "UtR",
               "label": "Ultimate Rare (Blue)",
-              "art": "ocg-ddm",
+              "art": "ocg-ddm-blue",
               "conf": "low",
               "img": "artwork/cards/dark-magician-girl/DDM-UtR-Blue.jpg",
               "collected": false
@@ -277,7 +287,7 @@ const CARD_DATA = {
             {
               "rarity": "ScR",
               "label": "Secret Rare (Pink)",
-              "art": "ocg-ddm",
+              "art": "ocg-ddm-pink",
               "conf": "low",
               "img": "artwork/cards/dark-magician-girl/DDM-ScR-Pink.jpg",
               "collected": false
@@ -285,7 +295,7 @@ const CARD_DATA = {
             {
               "rarity": "ScR",
               "label": "Secret Rare (Green)",
-              "art": "ocg-ddm",
+              "art": "ocg-ddm-green",
               "conf": "low",
               "img": "artwork/cards/dark-magician-girl/DDM-ScR-Green.jpg",
               "collected": false
@@ -293,7 +303,7 @@ const CARD_DATA = {
             {
               "rarity": "ScR",
               "label": "Secret Rare (Blue)",
-              "art": "ocg-ddm",
+              "art": "ocg-ddm-blue",
               "conf": "low",
               "img": "artwork/cards/dark-magician-girl/DDM-ScR-Blue.jpg",
               "collected": false
