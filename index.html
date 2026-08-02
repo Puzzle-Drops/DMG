@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMG OCG Collection</title>
+<meta name="description" content="Dark Magician Girl OCG (Japanese) collection tracker — every printing, every rarity, every artwork.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">OCG Japanese · Collection Tracker</p>
+  <h1>Dark Magician Girl<span class="jp">ブラック・マジシャン・ガール — Archetype · All OCG Prints</span></h1>
+  <div class="prog-wrap">
+    <div class="prog-label"><span>Variants owned</span><strong id="prog-text">0 / 0</strong></div>
+    <div class="bar"><div class="bar-fill" id="bar-fill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<div class="sort-bar">
+  <button class="sort-btn active" id="btn-card" data-view="card">Sort by Card</button>
+  <button class="sort-btn" id="btn-set" data-view="set">Sort by Set</button>
+  <button class="sort-btn" id="btn-art" data-view="art">Sort by Artwork</button>
+</div>
+
+<div class="filter-bar">
+  <label class="filter-toggle"><input type="checkbox" id="f-replica" checked> Show replicas</label>
+  <label class="filter-toggle"><input type="checkbox" id="f-prize"> Show prize / promo-only</label>
+</div>
+
+<main id="app"></main>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    <div class="modal-img-wrap"><img id="modal-img" src="" alt=""></div>
+    <div class="modal-body">
+      <div class="modal-en" id="modal-en"></div>
+      <div class="modal-jp" id="modal-jp"></div>
+      <div class="modal-set" id="modal-set"></div>
+      <div class="modal-section-title">How to identify each rarity on this card</div>
+      <div class="rarity-info-list" id="modal-rarities"></div>
+    </div>
+  </div>
+</div>
+
+<script src="data/cards.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
