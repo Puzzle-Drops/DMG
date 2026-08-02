@@ -438,7 +438,7 @@ const CARD_DATA = {
           "variants": [
             {
               "rarity": "UR",
-              "label": "Ultra Rare (B)",
+              "label": "Ultra Rare",
               "art": "dmg2",
               "conf": "high",
               "img": "artwork/cards/dark-magician-girl/15AY-JPB03-UR-RP-B.jpg",
@@ -480,7 +480,7 @@ const CARD_DATA = {
           "variants": [
             {
               "rarity": "UR",
-              "label": "Ultra Rare (C)",
+              "label": "Ultra Rare",
               "art": "dmg3",
               "conf": "high",
               "img": "artwork/cards/dark-magician-girl/15AY-JPC10-UR-RP-C.jpg",
@@ -908,6 +908,15 @@ const CARD_DATA = {
               "collected": false
             },
             {
+              "rarity": "ScR",
+              "label": "Secret Rare",
+              "art": "ocg-lpst",
+              "conf": "low",
+              "img": "artwork/cards/dark-magician-girl/LPST-JP002-UR.jpg",
+              "noScan": true,
+              "collected": false
+            },
+            {
               "rarity": "PScR",
               "label": "Prismatic Secret Rare",
               "art": "ocg-lpst",
@@ -1077,7 +1086,7 @@ const CARD_DATA = {
           "variants": [
             {
               "rarity": "UR",
-              "label": "Ultra Rare (Original Layout, OriginalLayout)",
+              "label": "Ultra Rare (Original Layout)",
               "art": "toon1",
               "conf": "high",
               "img": "artwork/cards/toon-dark-magician-girl/QCLP-JP010-UR-OriginalLayout.jpg",

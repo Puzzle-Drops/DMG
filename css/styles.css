@@ -92,6 +92,8 @@ main{max-width:980px;margin:0 auto;padding:.5rem 1rem 4rem;}
 .rdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px;vertical-align:middle;flex-shrink:0;}
 .var-label{font-size:.59rem;color:var(--text-dim);line-height:1.3;flex:1;}
 .var-row.owned .var-label{color:var(--text);}
+.noscan-tag{font-size:.48rem;padding:0 3px;border:1px solid var(--border);border-radius:3px;
+  color:var(--text-dim);margin-left:.25rem;white-space:nowrap;vertical-align:middle;}
 /* per-variant thumbnail — each rarity has its own scan */
 .var-thumb{width:17px;height:24px;object-fit:cover;border-radius:2px;flex-shrink:0;
   background:var(--purple-dark);cursor:pointer;opacity:0;transition:opacity .3s,transform .15s;}

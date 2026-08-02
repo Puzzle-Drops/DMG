@@ -107,7 +107,8 @@
   // ── image loading ──────────────────────────────────────────────────
   function mountImg(wrap, src, alt, cls) {
     var img = el('img');
-    img.src = src; img.alt = alt; img.loading = 'lazy';
+    // set loading before src, or the fetch may start before lazy applies
+    img.loading = 'lazy'; img.alt = alt; img.src = src;
     if (cls) img.className = cls;
     img.addEventListener('load', function () { img.classList.add('loaded'); });
     img.addEventListener('error', function () { img.style.display = 'none'; });
@@ -166,7 +167,7 @@
       (v.collected && !locked ? ' owned' : ''));
 
     var thumb = el('img', 'var-thumb');
-    thumb.src = v.img; thumb.alt = v.label; thumb.loading = 'lazy';
+    thumb.loading = 'lazy'; thumb.alt = v.label; thumb.src = v.img;
     thumb.addEventListener('load', function () { thumb.classList.add('loaded'); });
     thumb.addEventListener('error', function () { thumb.style.visibility = 'hidden'; });
     if (thumb.complete && thumb.naturalWidth) thumb.classList.add('loaded');
@@ -174,7 +175,8 @@
     row.appendChild(thumb);
 
     row.appendChild(el('div', 'var-check', v.collected && !locked ? '✓' : ''));
-    row.appendChild(el('div', 'var-label', rdot(v.rarity) + esc(v.label)));
+    row.appendChild(el('div', 'var-label', rdot(v.rarity) + esc(v.label) +
+      (v.noScan ? ' <span class="noscan-tag" title="Yugipedia has no scan of this printing — the image shown is its sibling rarity">no scan</span>' : '')));
 
     if (!locked) {
       row.addEventListener('click', function () {

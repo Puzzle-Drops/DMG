@@ -1,15 +1,16 @@
 # Dark Magician Girl — OCG Collection Tracker
 
 A static site tracking every realistically obtainable **OCG (Japanese)** printing of the
-Dark Magician Girl cards, with a real scan of every individual rarity.
+Dark Magician Girl cards, with a real scan of every individual rarity (one exception,
+noted under Data provenance).
 
 Open `index.html` in a browser. No build step, no server required.
 
-**5 cards · 49 printings · 92 rarity variants · 90 scans**
+**5 cards · 49 printings · 93 rarity variants · 90 scans**
 
 | Card | Printings | Variants |
 |---|---:|---:|
-| Dark Magician Girl | 36 | 56 |
+| Dark Magician Girl | 36 | 57 |
 | Toon Dark Magician Girl | 6 | 11 |
 | Dark Magician Girl the Dragon Knight | 5 | 18 |
 | Dark Magician Girl the Magician's Apprentice | 1 | 6 |
@@ -17,7 +18,7 @@ Open `index.html` in a browser. No build step, no server required.
 
 ---
 
-## Current collection — 11 of 92
+## Current collection — 11 of 93
 
 | Card | Rarity | Certainty |
 |---|---|---|
@@ -91,9 +92,9 @@ Every variant has an `art` key grouping it by illustration, and a `conf` field r
 how that assignment was reached:
 
 - `high` — matched against a reference illustration by image comparison and **verified
-  by eye**, or assigned by direct visual comparison. 71 of 92 variants.
+  by eye**, or assigned by direct visual comparison. 71 of 93 variants.
 - `med` — matched by image comparison with a clear margin. 8 variants.
-- `low` — no confident automated match; assigned by hand. 13 variants. These are the
+- `low` — no confident automated match; assigned by hand. 14 variants. These are the
   OCG-exclusive artworks with no TCG counterpart — the Dungeon Dice Monsters promos,
   the Stamp Edition art, the 7-Eleven art, the steel Special Card.
 
@@ -119,6 +120,11 @@ of the Yugipedia card galleries (fetched 2026-08-01). Release years come from ea
 Rush Duel printings are excluded — different game, different card back. Official Proxy
 entries are excluded — they are proxies, not cards.
 
+Every (set code, rarity) pair has been diffed against the live Yugipedia galleries and
+matches exactly. One printing — `LPST-JP002` Secret Rare — is real but has **no scan on
+Yugipedia**; it is marked `"noScan": true` and displays its sibling Ultra Rare image as a
+stand-in, tagged "no scan" in the page so it isn't mistaken for the real thing.
+
 ### Corrections to the earlier version
 
 The previous hand-built tracker (`original/dmg-collection.html`) carried real errors,
@@ -138,7 +144,8 @@ About 20 printings were missing entirely, including the six Dungeon Dice Monster
 The `replica` flag in the original was *correct* — it corresponds to Yugipedia's `RP`
 suffix — but it was incomplete; `DP16-JP009` and `15AX-JPM01` are replicas too.
 
-All 7 previously-owned variants were carried over.
+The collection was later reset and re-entered from the physical cards; see
+**Current collection** above.
 
 ---
 
