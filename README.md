@@ -62,18 +62,23 @@ Two filters sit under the view switcher:
 Every variant has an `art` key grouping it by illustration, and a `conf` field recording
 how that assignment was reached:
 
-- `high` / `med` — matched against a reference illustration by image comparison, then
-  **verified by eye**. 77 of 92 variants.
-- `low` — no confident match. These are OCG-exclusive artworks with no TCG counterpart
-  (the Dungeon Dice Monsters promos, the Stamp Edition art, the 7-Eleven art, the
-  steel Special Card). They were assigned by hand where the artwork was obvious.
+- `high` — matched against a reference illustration by image comparison and **verified
+  by eye**, or assigned by direct visual comparison. 71 of 92 variants.
+- `med` — matched by image comparison with a clear margin. 8 variants.
+- `low` — no confident automated match; assigned by hand. 13 variants. These are the
+  OCG-exclusive artworks with no TCG counterpart — the Dungeon Dice Monsters promos,
+  the Stamp Edition art, the 7-Eleven art, the steel Special Card.
 
-**One variant is still `"art": "unverified"`.** It appears in its own group at the bottom
-of the artwork view. If you can identify it from the scan, set its `art` key by hand.
+Every variant now has a real artwork assignment; none are left `unverified`. The view
+still supports an `unverified` group if you add printings later.
 
 Artwork identity is the one part of this dataset that is not machine-verifiable —
 Yugipedia does not record which illustration a given printing uses. Treat the artwork
 grouping as good but not authoritative; the set codes and rarities are solid.
+
+`QCAC-JP019` is worth knowing about: it carries **three** different illustrations —
+`UR`/`ScR` use the original art, `ScR (Alt Art)` and `QCScR` share a new QCAC
+illustration, and `QCScR (Alt Art)` reuses the seated `dmg2` pose.
 
 ---
 

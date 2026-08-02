@@ -142,17 +142,25 @@
     rar.addEventListener('click', function () { openModal(card, p); });
     info.appendChild(rar);
 
+    function refresh() {
+      var n = ownedCount(p);
+      div.classList.toggle('any-owned', n > 0);
+      var badge = div.querySelector('.owned-badge');
+      if (badge) badge.textContent = n + '/' + unlockedCount(p);
+    }
     var vd = el('div', 'variants');
     p.variants.forEach(function (v) {
-      vd.appendChild(buildVariantRow(card, p, v, div));
+      vd.appendChild(buildVariantRow(card, p, v, refresh));
     });
 
     div.appendChild(wrap); div.appendChild(info); div.appendChild(vd);
     return div;
   }
 
-  // ── one rarity row (with its own scan) ─────────────────────────────
-  function buildVariantRow(card, p, v, tile) {
+  /* One rarity row, with its own scan.
+     `refresh` re-renders whatever tile owns this row — the card view and the
+     artwork view count different things, so the tile supplies its own updater. */
+  function buildVariantRow(card, p, v, refresh) {
     var locked = isLocked(v);
     var row = el('div', 'var-row' + (locked ? ' var-locked' : ' unlocked') +
       (v.collected && !locked ? ' owned' : ''));
@@ -173,10 +181,7 @@
         v.collected = !v.collected;
         row.classList.toggle('owned', v.collected);
         row.querySelector('.var-check').textContent = v.collected ? '✓' : '';
-        var n = ownedCount(p);
-        tile.classList.toggle('any-owned', n > 0);
-        var badge = tile.querySelector('.owned-badge');
-        if (badge) badge.textContent = n + '/' + unlockedCount(p);
+        refresh();
         updateProgress();
       });
     }
@@ -224,19 +229,27 @@
     var groups = {};
     visiblePrintings().forEach(function (x) {
       x.p.variants.forEach(function (v) {
-        var key = v.art || 'unverified';
-        (groups[key] = groups[key] || []).push({ card: x.card, p: x.p, v: v });
+        // every other art key is card-specific; scope "unverified" so two
+        // different cards' unknowns don't collapse into one bogus group
+        var art = v.art || 'unverified';
+        var key = art === 'unverified' ? 'unverified::' + x.card.key : art;
+        (groups[key] = groups[key] || { art: art, card: x.card, items: [] })
+          .items.push({ card: x.card, p: x.p, v: v });
       });
     });
     var order = Object.keys(groups).sort(function (a, b) {
-      if (a === 'unverified') return 1;
-      if (b === 'unverified') return -1;
-      return (ARTWORKS[a] ? ARTWORKS[a].order : 99) - (ARTWORKS[b] ? ARTWORKS[b].order : 99);
+      var oa = ARTWORKS[groups[a].art] ? ARTWORKS[groups[a].art].order : 99;
+      var ob = ARTWORKS[groups[b].art] ? ARTWORKS[groups[b].art].order : 99;
+      return oa - ob || (a < b ? -1 : 1);
     });
 
     order.forEach(function (key) {
-      var meta = ARTWORKS[key] || { label: 'Unverified artwork', note: 'Artwork not yet identified — check the scans and set "art" in data/cards.js.' };
-      var items = groups[key];
+      var g = groups[key];
+      var base = ARTWORKS[g.art] || {};
+      var meta = g.art === 'unverified'
+        ? { label: g.card.en + ' — unverified artwork', note: base.note }
+        : base;
+      var items = g.items;
       app.appendChild(sectionHeader(meta.label, meta.jp || ''));
       var sub = el('p', 'sec-sub');
       sub.textContent = meta.note || (items.length + ' printings carry this artwork');
@@ -281,9 +294,15 @@
     }).join('');
     div.appendChild(pl);
 
+    function refresh() {
+      var n = items.filter(function (i) { return i.v.collected && !isLocked(i.v); }).length;
+      div.classList.toggle('any-owned', n > 0);
+      var badge = div.querySelector('.owned-badge');
+      if (badge) badge.textContent = n + '/' + items.length;
+    }
     var vd = el('div', 'variants');
     items.forEach(function (i) {
-      vd.appendChild(buildVariantRow(i.card, i.p, i.v, div));
+      vd.appendChild(buildVariantRow(i.card, i.p, i.v, refresh));
     });
     div.appendChild(vd);
     return div;
@@ -298,7 +317,9 @@
     else renderByArt(app);
 
     var hint = el('p', 'tap-hint');
-    hint.textContent = 'Tap card image → Yugipedia OCG gallery · Tap a rarity thumbnail → full scan · Tap "Rarity guide" → identify foiling';
+    hint.textContent = view === 'art'
+      ? 'Tap any image → full scan · Each tile lists the sets that carry that artwork in that rarity'
+      : 'Tap card image → Yugipedia OCG gallery · Tap a rarity thumbnail → full scan · Tap "Rarity guide" → identify foiling';
     app.appendChild(hint);
 
     var note = el('div', 'data-note',

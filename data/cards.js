@@ -934,22 +934,22 @@ const CARD_DATA = {
               "rarity": "ScR",
               "label": "Secret Rare (Alt Art)",
               "art": "dmg-qcac-alt",
-              "conf": "low",
+              "conf": "high",
               "img": "artwork/cards/dark-magician-girl/QCAC-JP019-ScR-AA.jpg",
               "collected": false
             },
             {
               "rarity": "QCScR",
               "label": "Quarter Century Secret Rare",
-              "art": "unverified",
-              "conf": "low",
+              "art": "dmg-qcac-alt",
+              "conf": "high",
               "img": "artwork/cards/dark-magician-girl/QCAC-JP019-QCScR.jpg",
               "collected": false
             },
             {
               "rarity": "QCScR",
               "label": "Quarter Century Secret Rare (Alt Art)",
-              "art": "dmg-qcac-alt",
+              "art": "dmg2",
               "conf": "high",
               "img": "artwork/cards/dark-magician-girl/QCAC-JP019-QCScR-AA.jpg",
               "collected": false
