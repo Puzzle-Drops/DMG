@@ -17,6 +17,34 @@ Open `index.html` in a browser. No build step, no server required.
 
 ---
 
+## Current collection — 11 of 92
+
+| Card | Rarity | Certainty |
+|---|---|---|
+| `YAP1-JP006` | Ultra Rare | only printing |
+| `CCC2-JP001` | Normal Parallel Rare | only printing |
+| `711E-JP002` | Normal Parallel Rare | only printing |
+| `TTP1-JP014` | Common | only printing |
+| `WJMP-JP018` | Ultra Rare | only printing, "gold emboss letters" ✓ |
+| `RV01-JP013` | Secret Rare | stated directly |
+| `ALIN-JP004` | Ultimate Rare | stated directly |
+| `QCLP-JP010` | Secret Rare | **inferred** from "gummy foil on the artwork" |
+| `ALIN-JP004` | Ultra Rare | **inferred** — described as "common", but no Common printing exists |
+| `PAC1-JP023` | Prismatic Secret Rare | **inferred** from "shiny and raised bumps"; set has no Ultimate Rare |
+| `QCAC-JP020` | Super Rare | **inferred** from "shiny" alone |
+
+The four inferred entries are worth re-checking against the card in hand:
+
+- **`QCLP-JP010`** — if there's a small "25" stamp on the artwork it's Quarter Century
+  Secret Rare, not Secret Rare. If the card *name* is gold it's an Ultra Rare.
+- **`ALIN-JP004`** — every ALIN-JP004 printing has a gold name. A plain silver name means
+  it is not this card; `TTP1-JP005` (Dark Magician Girl, Rare) is a likely candidate.
+- **`PAC1-JP023`** — assumed the standard sword-raised artwork. The Alt Art shows a large
+  shield with the green dragon prominent; if that's yours, change `art` to `dk1`.
+- **`QCAC-JP020`** — same artwork caveat as above.
+
+---
+
 ## Marking a card as collected
 
 `data/cards.js` is the single source of truth. Find the variant and flip one field:

@@ -1,7 +1,7 @@
 /* Dark Magician Girl — OCG collection data
  *
  * SOURCE OF TRUTH for your collection. To mark a card as owned, find its
- * variant below and change  "collected": false  ->  "collected": true
+ * variant below and change  "collected": false  ->  "collected": false
  * then reload the page. Nothing else needs editing.
  *
  * Optional per-variant "locked": defaults to !collected. Set it explicitly
@@ -1097,7 +1097,7 @@ const CARD_DATA = {
               "art": "toon1",
               "conf": "high",
               "img": "artwork/cards/toon-dark-magician-girl/QCLP-JP010-ScR.jpg",
-              "collected": false
+              "collected": true
             },
             {
               "rarity": "QCScR",
@@ -1122,7 +1122,7 @@ const CARD_DATA = {
               "art": "toon1",
               "conf": "high",
               "img": "artwork/cards/toon-dark-magician-girl/RV01-JP013-C.jpg",
-              "collected": true
+              "collected": false
             },
             {
               "rarity": "ScR",
@@ -1130,7 +1130,7 @@ const CARD_DATA = {
               "art": "toon1",
               "conf": "high",
               "img": "artwork/cards/toon-dark-magician-girl/RV01-JP013-ScR.jpg",
-              "collected": false
+              "collected": true
             }
           ]
         }
@@ -1230,7 +1230,7 @@ const CARD_DATA = {
               "art": "dk2",
               "conf": "high",
               "img": "artwork/cards/dmg-the-dragon-knight/PAC1-JP023-SR.jpg",
-              "collected": true
+              "collected": false
             },
             {
               "rarity": "ScR",
@@ -1254,7 +1254,7 @@ const CARD_DATA = {
               "art": "dk2",
               "conf": "high",
               "img": "artwork/cards/dmg-the-dragon-knight/PAC1-JP023-PScR.jpg",
-              "collected": false
+              "collected": true
             },
             {
               "rarity": "PScR",
@@ -1279,7 +1279,7 @@ const CARD_DATA = {
               "art": "dk2",
               "conf": "high",
               "img": "artwork/cards/dmg-the-dragon-knight/QCAC-JP020-SR.jpg",
-              "collected": false
+              "collected": true
             },
             {
               "rarity": "ScR",
@@ -1328,7 +1328,7 @@ const CARD_DATA = {
               "art": "dk2",
               "conf": "high",
               "img": "artwork/cards/dmg-the-dragon-knight/TTP1-JP014-C.jpg",
-              "collected": false
+              "collected": true
             }
           ]
         }
@@ -1370,7 +1370,7 @@ const CARD_DATA = {
               "art": "app1",
               "conf": "high",
               "img": "artwork/cards/dmg-the-magicians-apprentice/ALIN-JP004-UtR.jpg",
-              "collected": false
+              "collected": true
             },
             {
               "rarity": "ScR",
